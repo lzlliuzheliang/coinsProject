@@ -1,0 +1,42 @@
+<html>
+
+<head>
+	<title>Coins data</title>
+	<!-- <script type="text/javascript" src="/static/showindex.js"></script> -->
+
+</head>
+
+<body onload="load()">
+		<p>Asset:</p>
+       	 <select name="asset" id="assetslt">
+       	 	<option>btc</option>
+       	 	<option>bch</option>
+       	 	<option>ltc</option>
+       	 	<option>eth</option>
+       	 	<option>etc</option>
+       	 </select>
+       	 <p>  Type:</p>
+       	 <select name="type" id="typeslt">
+       	 	<option>-</option>
+       	 </select>
+       	 <p>  Start Date:</p>
+       	 <input id="startDate" type="date" min="2009-09-16" />
+       	 <p>  End Date:</p>
+       	 <input id="endDate" type="date" min="2009-09-16" />
+
+       	 <button id="submit" type="button" onclick="search()">search</button>
+
+       	 <div id="chartContainer" style="height: 370px; width: 100%;"></div>
+		 <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+       	 <script type="text/javascript">
+       	 	var cointypes = {{ cointypes|safe }};
+       	 </script>
+       	 <script type="text/javascript"> var updateurl = {% url 'updateview' %}</script>
+       	 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
+
+</body>
+	<script type="text/javascript" src="/static/showindex.js"></script>
+
+</html>
