@@ -70,8 +70,9 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 		types_str2 = types_str2 + ', %s'
 
 	sql = "INSERT INTO " + str(asset) + " (" + types_str +") VALUES (" + types_str2 + ')'
-	# val_list = []
 
+	# Save all the data in a dictionary. In the dictionary, the key is timestamp, the value is all the data of that timestamp
+	# dictionary{timestamp1: [data1, data2, ...], ...}
 	data_dic = {}
 	index = 1
 	for type in types:
@@ -79,7 +80,7 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 			if data[1] == None:
 				continue
 			if data[0] not in data_dic:
-				#make a new list
+				#make a new empty list
 				ls = get_list(len(types))
 				ls[0] = data[0]
 				data_dic[data[0]] = ls
