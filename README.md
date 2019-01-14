@@ -10,7 +10,7 @@ pip install mysqlclient
 ```
 ### 3. Modify database setting for your mysql database in /coinsProject/src/initdatabase/mydatabase.py
 
-Here is a example:
+Here is an example:
 ```
 CONFIG = {
 	"host": "localhost",
