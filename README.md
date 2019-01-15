@@ -21,10 +21,14 @@ CONFIG = {
 ```
 
 ### 4. Run /initdatabase/initial.py
-```python initial.py```
+```
+python initial.py
+```
 
 ### 5. Start the django server in /coinsProject/src/ folder (for test)
-```python manage.py runserver```
+```
+python manage.py runserver
+```
 
 ### 6. Open http://127.0.0.1:8000/
 
