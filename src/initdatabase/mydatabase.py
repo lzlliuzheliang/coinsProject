@@ -72,10 +72,7 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 		types_str2 = types_str2 + ', %s'
 
 	sql = "INSERT INTO " + str(asset) + " (" + types_str +") VALUES (" + types_str2 + ')'
-<<<<<<< HEAD
-=======
 
->>>>>>> afa18bec046637d48a81b19753222c88ef9defee
 	# Save all the data in a dictionary. In the dictionary, the key is timestamp, the value is all the data of that timestamp
 	# dictionary{timestamp1: [data1, data2, ...], ...}
 	data_dic = {}
