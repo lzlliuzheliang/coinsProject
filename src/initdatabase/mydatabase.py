@@ -58,10 +58,12 @@ def get_history_data_for_asset(asset):
 	return alldata
 
 def get_yesterday_data_for_asset(asset):
-	yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+	yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=2)
+	today = datetime.datetime.utcnow()
 	begin_timestamp = calendar.timegm(yesterday.replace(hour = 0, minute = 0, second = 0).timetuple())
-	end_timestamp = calendar.timegm(yesterday.replace(hour = 23, minute = 59, second = 59).timetuple())
+	end_timestamp = calendar.timegm(today.replace(hour = 23, minute = 59, second = 59).timetuple())
 	alldata = cm.get_all_data_types_for_assets(str(asset), begin_timestamp, end_timestamp)[str(asset)]
+	print(alldata)
 	return alldata
 
 def store_data_for_asset(asset, alldata, mydb, mycursor):
@@ -88,7 +90,6 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 				data_dic[data[0]] = ls
 			data_dic[data[0]][index] = str(data[1])
 		index+=1
-
 
 	for value in data_dic.values():
 		print(value)
