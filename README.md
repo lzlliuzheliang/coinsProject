@@ -1,6 +1,7 @@
 # coinsProject
 This is an assignment for Athanor interview
-### 1. Install coin metrics python wrapper in the coinsProject folder， here is the link: https://github.com/man-c/coinmetrics
+### 1. Install coin metrics python wrapper in the coinsProject folder， here is the link: https://github.com/man-c/coinmetrics. (In the /coinmetrics/setup.py file, replace "from distutils.core import setup" with "from setuptools import setup")
+
 
 ### 2. Install modules 
 ```
