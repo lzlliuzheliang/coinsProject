@@ -10,7 +10,7 @@ pip install mysqlclient
 ```
 ### 3. Modify database setting for your mysql database in /coinsProject/src/initdatabase/mydatabase.py
 
-Here is a example:
+Here is an example:
 ```
 CONFIG = {
 	"host": "localhost",
@@ -21,10 +21,14 @@ CONFIG = {
 ```
 
 ### 4. Run /initdatabase/initial.py
-```python initial.py```
+```
+python initial.py
+```
 
 ### 5. Start the django server in /coinsProject/src/ folder (for test)
-```python manage.py runserver```
+```
+python manage.py runserver
+```
 
 ### 6. Open http://127.0.0.1:8000/
 
