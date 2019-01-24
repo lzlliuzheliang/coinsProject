@@ -5,6 +5,7 @@ from coinmetrics import CoinMetricsAPI
 from initdatabase import mydatabase
 from django.views.decorators.csrf import csrf_exempt 
 import datetime
+import calendar
 
 # Create your views here.
 cm = CoinMetricsAPI()
@@ -35,6 +36,7 @@ def show(request):
 @csrf_exempt
 def updateview(request):
 	if request.method == 'POST':
+		# get all data from post request
 		asset = request.POST.get('asset')
 		dataType = request.POST.get('dataType')
 		startDate = request.POST.get('start')
@@ -44,17 +46,16 @@ def updateview(request):
 		alldata = []
 		
 		print(endDate)
+
 		try:
-			begin_timestamp = int(datetime.datetime(int(startDate[0:4]), int(startDate[5:7]), int(startDate[8:10])).timestamp())
-			#end_timestamp = int(datetime.datetime(2009, 1, 2, 23, 59).timestamp())
-			end_timestamp = int(datetime.datetime(int(endDate[0:4]), int(endDate[5:7]), int(endDate[8:10]),23, 59).timestamp())
-			# alldata = cm.get_all_data_types_for_assets(str(asset), begin_timestamp, end_timestamp)[str(asset)]
+			begin_timestamp = calendar.timegm(datetime.datetime(int(startDate[0:4]), int(startDate[5:7]), int(startDate[8:10]), 00, 00).timetuple())
+			end_timestamp = calendar.timegm(datetime.datetime(int(endDate[0:4]), int(endDate[5:7]), int(endDate[8:10]),23, 59).timetuple())
 		except:
 			dataDict["status"] = 0;
 			dataDict["data"] = alldata;
 			dataDict["message"] = "Input date is invalid!"
 			return HttpResponse(json.dumps(dataDict))
-
+		# Query data from database
 		sql = "SELECT timestamp," + str(dataType) + " FROM " + str(asset) + " WHERE timestamp BETWEEN " + str(begin_timestamp) + " AND " + str(end_timestamp);
 		print(sql)
 		mycursor.execute(sql)
@@ -62,10 +63,10 @@ def updateview(request):
 		
 		for x in myresult:
 			tup = []
-			tup.append(str(datetime.datetime.fromtimestamp(x[0])))
+			tup.append(str(datetime.datetime.utcfromtimestamp(x[0])))
 			tup.append(x[1])
 			print(x)
-			print(datetime.datetime.fromtimestamp(x[0]))
+			print(datetime.datetime.utcfromtimestamp(x[0]))
 			alldata.append(tup)
 
 		dataDict["status"] = 1;

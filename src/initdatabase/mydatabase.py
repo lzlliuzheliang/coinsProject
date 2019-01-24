@@ -1,8 +1,10 @@
 import mysql.connector
 from coinmetrics import CoinMetricsAPI
 import datetime
+import calendar
 
 cm = CoinMetricsAPI()
+# Database config
 CONFIG = {
 	"host": "localhost",
   	"user": "root",
@@ -48,17 +50,17 @@ def createtable(asset, mycursor):
 	mycursor.execute(sql)
 
 def get_history_data_for_asset(asset):
-	yesterday = datetime.datetime.today() - datetime.timedelta(1)
+	yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
 	begin_timestamp = int(datetime.datetime(2009, 1, 1).timestamp())
 	#end_timestamp = int(datetime.datetime(2009, 1, 2, 23, 59).timestamp())
-	end_timestamp = int(datetime.datetime(yesterday.year, yesterday.month, yesterday.day, 23, 59).timestamp())
+	end_timestamp = calendar.timegm(yesterday.replace(hour = 23, minute = 59, second = 59).timetuple())
 	alldata = cm.get_all_data_types_for_assets(str(asset), begin_timestamp, end_timestamp)[str(asset)]
 	return alldata
 
 def get_yesterday_data_for_asset(asset):
-	yesterday = datetime.datetime.today() - datetime.timedelta(2)
-	begin_timestamp = int(datetime.datetime(yesterday.year, yesterday.month, yesterday.day).timestamp())
-	end_timestamp = int(datetime.datetime(yesterday.year, yesterday.month, yesterday.day, 23, 59).timestamp())
+	yesterday = datetime.datetime.utcnow() - datetime.timedelta(days=1)
+	begin_timestamp = calendar.timegm(yesterday.replace(hour = 0, minute = 0, second = 0).timetuple())
+	end_timestamp = calendar.timegm(yesterday.replace(hour = 23, minute = 59, second = 59).timetuple())
 	alldata = cm.get_all_data_types_for_assets(str(asset), begin_timestamp, end_timestamp)[str(asset)]
 	return alldata
 
@@ -70,16 +72,16 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 		types_str2 = types_str2 + ', %s'
 
 	sql = "INSERT INTO " + str(asset) + " (" + types_str +") VALUES (" + types_str2 + ')'
-	# val_list = []
-
+	# Save all the data in a dictionary. In the dictionary, the key is timestamp, the value is all the data of that timestamp
+	# dictionary{timestamp1: [data1, data2, ...], ...}
 	data_dic = {}
 	index = 1
 	for type in types:
 		for data in alldata[type]:
-			if data[1] == None:
+			if data[1] == None or data[1] == 0:
 				continue
 			if data[0] not in data_dic:
-				#make a new list
+				#make a new empty list
 				ls = get_list(len(types))
 				ls[0] = data[0]
 				data_dic[data[0]] = ls
@@ -95,7 +97,7 @@ def store_data_for_asset(asset, alldata, mydb, mycursor):
 
 
 def get_list(num):
-	ls = [""]
+	ls = ["0"]
 	for i in range(num):
 		ls.append("")
 	return ls
