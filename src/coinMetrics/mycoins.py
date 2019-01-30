@@ -47,7 +47,6 @@ class Mycoin:
 		r = {}
 		for d in data_types:
 			r[d] = self.get_asset_data_for_time_range(asset, d, begin_timestamp,  end_timestamp)
-		print("======================= printing data ===========================")
 		# Save all the data in a dictionary. In the dictionary, the key is timestamp, the value is all the data of that timestamp
 		# dictionary{timestamp1: [data1, data2, ...], ...}
 		data_dict = {}
