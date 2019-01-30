@@ -26,7 +26,7 @@ begin_timestamp = database.get_max_timestamp(mydb.DBSession)+1
 if begin_timestamp == 0:
 	begin_timestamp = int(datetime.datetime(2009, 1, 1).timestamp())
 
-begin_timestamp = 1547182800
+# begin_timestamp = 1547182800
 # end_timestamp = 1547442000
 # begin_timestamp = None
 # end_timestamp = None

@@ -1,7 +1,5 @@
 *.pyc
 
-coinmetrics/
-
 __pycache__/
 
 test.py
