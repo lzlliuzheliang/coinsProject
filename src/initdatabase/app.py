@@ -18,7 +18,7 @@ if begin_timestamp == 0:
 	first_run = True
 	begin_timestamp = int(datetime.datetime(2009, 1, 1).timestamp())
 
-
+# begin_timestamp = 1501891200
 print("Begin timestamp: "+str(begin_timestamp))
 
 
@@ -29,11 +29,19 @@ eth_data = mc.get_all_data_types_for_asset('eth', begin_timestamp)
 etc_data = mc.get_all_data_types_for_asset('etc', begin_timestamp)
 
 if first_run:
-	database.core_bulk_insert_data('btc', mydb.engine, btc_data)
-	database.core_bulk_insert_data('bch', mydb.engine, bch_data)
-	database.core_bulk_insert_data('ltc', mydb.engine, ltc_data)
-	database.core_bulk_insert_data('eth', mydb.engine, eth_data)
-	database.core_bulk_insert_data('etc', mydb.engine, etc_data)
+	# Sqlalchemy ore
+	# database.core_bulk_insert_data('btc', mydb.engine, btc_data)
+	# database.core_bulk_insert_data('bch', mydb.engine, bch_data)
+	# database.core_bulk_insert_data('ltc', mydb.engine, ltc_data)
+	# database.core_bulk_insert_data('eth', mydb.engine, eth_data)
+	# database.core_bulk_insert_data('etc', mydb.engine, etc_data)
+
+	# Sqlalchemy orm
+	database.orm_insert_data('btc', mydb.DBSession, btc_data)
+	database.orm_insert_data('bch', mydb.DBSession, bch_data)
+	database.orm_insert_data('ltc', mydb.DBSession, ltc_data)
+	database.orm_insert_data('eth', mydb.DBSession, eth_data)
+	database.orm_insert_data('etc', mydb.DBSession, etc_data)
 else:
 	database.core_single_insert_data('btc', mydb.engine, btc_data)
 	database.core_single_insert_data('bch', mydb.engine, bch_data)

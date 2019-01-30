@@ -107,19 +107,25 @@ def create_tables(engine):
 	Base.metadata.create_all(bind=engine)
 
 
+def get_object(table_name):
+	if table_name == 'btc':
+		return btc()
+	elif table_name == 'bch':
+	 	return bch()
+	elif table_name == 'ltc':
+	 	return ltc()
+	elif table_name == 'eth':
+	 	return eth()
+	elif table_name == 'etc':
+	 	return etc()
+
 
 def orm_insert_data(table_name, DBSession, all_data):
-	print(data)
 	session = DBSession()
-	switcher = {
-		'btc': btc(),
-		'bch': bch(),
-		'ltc': ltc(),
-		'eth': eth(),
-		'etc': etc(),
-	}
+	objects = []
+	count = 0
 	for data in all_data.values():
-		new_tuple = switcher.get(table_name)
+		new_tuple = get_object(table_name)
 		new_tuple.timestamp = data[0]
 		index = 1
 		for type in mc.get_available_data_types_for_asset(table_name):
@@ -127,9 +133,17 @@ def orm_insert_data(table_name, DBSession, all_data):
 			type = type.replace(")", "")
 			setattr(new_tuple, str(type), str(data[index]))
 			index+=1
-
-		session.add(new_tuple)
-		session.commit()		
+		count+=1
+		objects.append(new_tuple)
+		print(str(data))
+		if count == 1000:
+			session.bulk_save_objects(objects)
+			session.commit()
+			objects = []
+			count = 0
+	
+	session.bulk_save_objects(objects)
+	session.commit()		
 
 	session.close()
 
@@ -137,6 +151,7 @@ def core_bulk_insert_data(table_name, engine, all_data):
 	table = Table(table_name, Base.metadata, autoload=True, autoload_with=engine)
 	data_list = []
 	conn = engine.connect()
+	count = 0
 	for data in all_data.values():
 		tuple_dict = {}
 		tuple_dict["timestamp"] = data[0]
@@ -146,7 +161,15 @@ def core_bulk_insert_data(table_name, engine, all_data):
 			type = type.replace(")", "")
 			tuple_dict[type] = data[index]
 			index+=1
+		count+=1
 		data_list.append(tuple_dict)
+		if count == 1000:
+			try:
+				conn.execute(table.insert(), data_list)
+			except Exception as e:
+				print(e)
+			count=0
+			data_list = []
 		print(str(tuple_dict))
 
 	try:
