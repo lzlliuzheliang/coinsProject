@@ -15,7 +15,7 @@ begin_timestamp = database.get_max_timestamp(mydb.DBSession)+1
 if begin_timestamp == 0:
 	begin_timestamp = int(datetime.datetime(2009, 1, 1).timestamp())
 
-print("Begin timestamp: "begin_timestamp)
+print("Begin timestamp: "+str(begin_timestamp))
 
 # btc_data = mc.get_all_data_types_for_asset('btc', begin_timestamp, end_timestamp)
 btc_data = mc.get_all_data_types_for_asset('btc', begin_timestamp)
