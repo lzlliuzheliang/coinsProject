@@ -1,16 +1,16 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 import json
-from coinmetrics import CoinMetricsAPI
-from initdatabase import mydatabase
+from db import mydatabase as database
+from coinMetrics import mycoins
 from django.views.decorators.csrf import csrf_exempt 
 import datetime
 import calendar
 
 # Create your views here.
-cm = CoinMetricsAPI()
-mydb = mydatabase.Mydatabase(False)
-mycursor = mydb.mycursor
+cm = mycoins.Mycoin()
+mydb = database.Mydatabase()
+
 
 def index(request):
 	return HttpResponse("Hello, world. You're at the showdata index.")
@@ -35,6 +35,7 @@ def show(request):
 #updata
 @csrf_exempt
 def updateview(request):
+	alldata=[]
 	if request.method == 'POST':
 		# get all data from post request
 		asset = request.POST.get('asset')
@@ -43,7 +44,6 @@ def updateview(request):
 		endDate = request.POST.get('end')
 		dataType = dataType.replace("(", "_").replace(")", "")
 		dataDict = {}
-		alldata = []
 		
 		print(endDate)
 
@@ -56,20 +56,30 @@ def updateview(request):
 			dataDict["message"] = "Input date is invalid!"
 			return HttpResponse(json.dumps(dataDict))
 		# Query data from database
-		sql = "SELECT timestamp," + str(dataType) + " FROM " + str(asset) + " WHERE timestamp BETWEEN " + str(begin_timestamp) + " AND " + str(end_timestamp);
-		print(sql)
-		mycursor.execute(sql)
-		myresult = mycursor.fetchall()
-		
-		for x in myresult:
-			tup = []
+		result = database.core_query_data(asset, dataType, mydb.engine, begin_timestamp, end_timestamp)
+		for x in result:
+			tup=[]
 			tup.append(str(datetime.datetime.utcfromtimestamp(x[0])))
 			tup.append(x[1])
-			print(x)
-			print(datetime.datetime.utcfromtimestamp(x[0]))
 			alldata.append(tup)
 
-		dataDict["status"] = 1;
-		dataDict["data"] = alldata;
+		return HttpResponse(json.dumps(alldata))
+
+		# Old code
+		# sql = "SELECT timestamp," + str(dataType) + " FROM " + str(asset) + " WHERE timestamp BETWEEN " + str(begin_timestamp) + " AND " + str(end_timestamp);
+		# print(sql)
+		# mycursor.execute(sql)
+		# myresult = mycursor.fetchall()
+		
+		# for x in myresult:
+		# 	tup = []
+		# 	tup.append(str(datetime.datetime.utcfromtimestamp(x[0])))
+		# 	tup.append(x[1])
+		# 	print(x)
+		# 	print(datetime.datetime.utcfromtimestamp(x[0]))
+		# 	alldata.append(tup)
+
+		# dataDict["status"] = 1;
+		# dataDict["data"] = alldata;
 
 	return HttpResponse(json.dumps(alldata))
