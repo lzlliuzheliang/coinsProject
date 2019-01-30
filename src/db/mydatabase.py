@@ -8,6 +8,7 @@ from sqlalchemy.sql import select
 
 mc = coinMetrics.mycoins.Mycoin()
 
+# Set your database confic here
 CONFIG = {
 	"host": "localhost",
 	"user": "root",
@@ -50,11 +51,6 @@ def get_database_engine(rebuild_database = True):
 	create_tables(engine)
 	return engine
 
-
-# engine = get_database_engine(True)
-# Base = declarative_base()
-# DBSession = sessionmaker(bind=engine)
-# session = DBSession()
 
 # Define Class
 class btc(Base):
@@ -127,12 +123,9 @@ def orm_insert_data(table_name, DBSession, all_data):
 		new_tuple.timestamp = data[0]
 		index = 1
 		for type in mc.get_available_data_types_for_asset(table_name):
-			# new_tuple[type] = data[index]
-			# new_tuple[str(type)] = "nothing"
 			type = type.replace("(", "_")
 			type = type.replace(")", "")
 			setattr(new_tuple, str(type), str(data[index]))
-			# print(getattr(new_tuple, str(type)))
 			index+=1
 
 		session.add(new_tuple)
@@ -181,7 +174,8 @@ def core_single_insert_data(table_name, engine, all_data):
 			print(e)
 
 	conn.close()
-	
+
+# Sqlalchemy core query
 def core_query_data(table_name, datatype, engine, begin_timestamp,  end_timestamp):
 	table = Table(table_name, Base.metadata, autoload=True, autoload_with=engine)
 	print(table.c)
@@ -190,7 +184,6 @@ def core_query_data(table_name, datatype, engine, begin_timestamp,  end_timestam
 	print(begin_timestamp)
 	print(end_timestamp)
 	s = select([table]).where(table.c.timestamp.between(int(begin_timestamp), int(end_timestamp)))
-	# s = select([table])
 	result = conn.execute(s)
 	rows = result.fetchall()
 	print(result)
@@ -205,7 +198,7 @@ def core_query_data(table_name, datatype, engine, begin_timestamp,  end_timestam
 	conn.close()
 	return alldata
 
-
+# Sqlalchemy ORM query
 def query_data(table_name, datatype, DBSession, begin_timestamp, end_timestamp):
 	session = DBSession()
 	switcher = {
@@ -216,12 +209,15 @@ def query_data(table_name, datatype, DBSession, begin_timestamp, end_timestamp):
 		'etc': session.query(etc).filter(etc.timestamp.between(begin_timestamp, end_timestamp)),
 	}
 	tuples = switcher.get(table_name)
-	data = {}
+	alldata = []
 	for t in tuples:
-		data[t.timestamp] = getattr(t, datatype)
+		data = []
+		data.append(t.timestamp)
+		data.append(getattr(t, datatype))
+		alldata.append(data)
 
 	session.close()
-	return data
+	return alldata
 
 def get_max_timestamp(DBSession):
 	session = DBSession()

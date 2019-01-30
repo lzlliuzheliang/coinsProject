@@ -56,7 +56,8 @@ def updateview(request):
 			dataDict["message"] = "Input date is invalid!"
 			return HttpResponse(json.dumps(dataDict))
 		# Query data from database
-		result = database.core_query_data(asset, dataType, mydb.engine, begin_timestamp, end_timestamp)
+		result = database.core_query_data(asset, dataType, mydb.engine, begin_timestamp, end_timestamp)  #Sqlalchemy core
+		# result = database.query_data(asset, dataType, mydb.DBSession, begin_timestamp, end_timestamp)	 #Sqlalchemy orm
 		for x in result:
 			tup=[]
 			tup.append(str(datetime.datetime.utcfromtimestamp(x[0])))
