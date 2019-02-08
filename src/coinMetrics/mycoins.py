@@ -18,6 +18,7 @@ class Mycoin:
 		self.session.mount('http://', HTTPAdapter(max_retries=retries))
 
 
+
 	def __request(self, url):
 		try:
 			response = self.session.get(url, timeout = self.request_timeout)
@@ -73,6 +74,13 @@ class Mycoin:
 		elif begin_timestamp and not end_timestamp:
 			end_timestamp = calendar.timegm(today.replace(hour = 23, minute = 59, second = 59).timetuple())
 		return begin_timestamp, end_timestamp
+
+	def init_type_names(self):
+		self.typedict = {}
+		type_names = ["btc", "bch", "ltc", "eth", "etc"]
+		for name in type_names:
+			self.typedict[name] = self.get_available_data_types_for_asset(name)
+
 
 def get_list(num):
 	ls = ["0"]

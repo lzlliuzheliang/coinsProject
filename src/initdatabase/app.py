@@ -4,9 +4,12 @@ import db.mydatabase as database
 from coinMetrics import mycoins
 import datetime
 import calendar
+import time
 
+
+start = time.time()
 mc = mycoins.Mycoin()
-
+mc.init_type_names()
 mydb = database.Mydatabase()
 
 # to_do 
@@ -58,4 +61,6 @@ else:
 # for data in etc_data.values():
 
 
+elapsed = (time.time() - start)
+print("Time used:",elapsed)
 

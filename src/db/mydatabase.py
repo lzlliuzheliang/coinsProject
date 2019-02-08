@@ -7,7 +7,7 @@ import coinMetrics.mycoins
 from sqlalchemy.sql import select
 
 mc = coinMetrics.mycoins.Mycoin()
-
+mc.init_type_names()
 # Set your database confic here
 CONFIG = {
 	"host": "localhost",
@@ -24,6 +24,8 @@ class Mydatabase:
 	def __init__(self):
 		self.engine = get_database_engine(False)
 		self.DBSession = sessionmaker(bind=self.engine)
+
+
 		
 
 
@@ -76,30 +78,30 @@ class etc(Base):
 
 def create_tables(engine):
 	#btc
-	for type in mc.get_available_data_types_for_asset("btc"):
+	for type in mc.typedict["btc"]:
 		type = type.replace("(", "_")
 		type = type.replace(")", "")
 		setattr(btc,str(type),(Column(str(type), String(255))))
 
 	#bch
-	for type in mc.get_available_data_types_for_asset("bch"):
+	for type in mc.typedict["bch"]:
 		type = type.replace("(", "_")
 		type = type.replace(")", "")
 		setattr(bch,str(type),(Column(str(type), String(255))))
 
 	#ltc
-	for type in mc.get_available_data_types_for_asset("ltc"):
+	for type in mc.typedict["ltc"]:
 		type = type.replace("(", "_")
 		type = type.replace(")", "")
 		setattr(ltc,str(type),(Column(str(type), String(255))))
 	#eth
-	for type in mc.get_available_data_types_for_asset("eth"):
+	for type in mc.typedict["eth"]:
 		type = type.replace("(", "_")
 		type = type.replace(")", "")
 		setattr(eth,str(type),(Column(str(type), String(255))))
 
 	#etc
-	for type in mc.get_available_data_types_for_asset("etc"):
+	for type in mc.typedict["etc"]:
 		type = type.replace("(", "_")
 		type = type.replace(")", "")
 		setattr(etc,str(type),(Column(str(type), String(255))))
@@ -128,14 +130,14 @@ def orm_insert_data(table_name, DBSession, all_data):
 		new_tuple = get_object(table_name)
 		new_tuple.timestamp = data[0]
 		index = 1
-		for type in mc.get_available_data_types_for_asset(table_name):
+		for type in mc.typedict[table_name]:
 			type = type.replace("(", "_")
 			type = type.replace(")", "")
 			setattr(new_tuple, str(type), str(data[index]))
 			index+=1
 		count+=1
 		objects.append(new_tuple)
-		print(str(data))
+		# print(str(data))
 		if count == 1000:
 			session.bulk_save_objects(objects)
 			session.commit()
@@ -156,7 +158,7 @@ def core_bulk_insert_data(table_name, engine, all_data):
 		tuple_dict = {}
 		tuple_dict["timestamp"] = data[0]
 		index = 1
-		for type in mc.get_available_data_types_for_asset(table_name):
+		for type in mc.typedict[table_name]:
 			type = type.replace("(", "_")
 			type = type.replace(")", "")
 			tuple_dict[type] = data[index]
@@ -186,7 +188,7 @@ def core_single_insert_data(table_name, engine, all_data):
 		tuple_dict = {}
 		tuple_dict["timestamp"] = data[0]
 		index = 1
-		for type in mc.get_available_data_types_for_asset(table_name):
+		for type in mc.typedict[table_name]:
 			type = type.replace("(", "_")
 			type = type.replace(")", "")
 			tuple_dict[type] = data[index]

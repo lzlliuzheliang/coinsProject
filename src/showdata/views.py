@@ -9,6 +9,7 @@ import calendar
 
 # Create your views here.
 cm = mycoins.Mycoin()
+cm.init_type_names()
 mydb = database.Mydatabase()
 
 
@@ -16,11 +17,11 @@ def index(request):
 	return HttpResponse("Hello, world. You're at the showdata index.")
 
 def show(request):
-	types_btc = cm.get_available_data_types_for_asset('btc')
-	types_bch = cm.get_available_data_types_for_asset('bch')
-	types_ltc = cm.get_available_data_types_for_asset('ltc')
-	types_eth = cm.get_available_data_types_for_asset('eth')
-	types_etc = cm.get_available_data_types_for_asset('etc')
+	types_btc = cm.typedict["btc"]
+	types_bch = cm.typedict["bch"]
+	types_ltc = cm.typedict["ltc"]
+	types_eth = cm.typedict["eth"]
+	types_etc = cm.typedict["etc"]
 
 	# print(type(types_btc))
 	cointypes = {
